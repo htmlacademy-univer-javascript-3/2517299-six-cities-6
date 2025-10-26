@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { offers } from './mocks/offers';
+
+const PLACES_COUNT = 312;
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -9,6 +10,6 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <App offers={offers} />
+    <App placesCount={PLACES_COUNT}/>
   </React.StrictMode>
 );
