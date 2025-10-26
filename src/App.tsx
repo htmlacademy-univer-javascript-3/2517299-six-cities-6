@@ -1,34 +1,35 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import MainPage from './main-page';
-import LoginPage from './login-page';
-import FavoritesPage from './favorites-page';
-import OfferPage from './offer-page';
-import NotFoundPage from './not-found-page';
+import MainPage from './pages/main-page';
+import LoginPage from './pages/login-page';
+import FavoritesPage from './pages/favorites-page';
+import OfferPage from './pages/offer-page';
+import NotFoundPage from './pages/not-found-page';
 import PrivateRoute from './private-route';
+import { Offer } from './types/offers';
 
 type AppProps = {
-  placesCount: number;
+  offers: Offer[];
 };
 
-const App: React.FC<AppProps> = ({ placesCount }) => {
+const App: React.FC<AppProps> = ({ offers }) => {
   const isAuthorized = false;
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<MainPage placesCount={placesCount} />} />
+        <Route path="/" element={<MainPage offers={offers} />} />
         <Route path="/login" element={<LoginPage />} />
         <Route
           path="/favorites"
           element={
             <PrivateRoute isAuthorized={isAuthorized}>
-              <FavoritesPage />
+              <FavoritesPage offers={offers} />
             </PrivateRoute>
           }
         />
-        <Route path="/offer/:id" element={<OfferPage />} />
+        <Route path="/offer/:id" element={<OfferPage offers={offers} />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
