@@ -24,3 +24,5 @@ yarn-error.log*
 .idea
 *.sublime*
 .vscode
+node_modules
+.vite
