@@ -19,26 +19,25 @@ leaflet.Marker.prototype.options.icon = leaflet.icon({
 
 type MapProps = {
   offers: Offer[];
+  center: {
+    latitude: number;
+    longitude: number;
+  };
 };
 
 const DEFAULT_ZOOM = 13;
 
-function Map({ offers }: MapProps): JSX.Element {
+function Map({ offers, center }: MapProps): JSX.Element {
   const mapRef = useRef<HTMLDivElement | null>(null);
-
-  const cityLocation = offers[0]?.city.location;
 
   const map = useMap({
     mapRef,
-    location: cityLocation ?? {
-      latitude: 0,
-      longitude: 0,
-    },
+    location: center,
     zoom: DEFAULT_ZOOM,
   });
 
   useEffect(() => {
-    if (!map || offers.length === 0) {
+    if (!map) {
       return;
     }
 
@@ -58,12 +57,9 @@ function Map({ offers }: MapProps): JSX.Element {
     };
   }, [map, offers]);
 
-
   return (
     <div className={styles.map}>
-      {offers.length > 0 && (
-        <div className={styles['map__container']} ref={mapRef} />
-      )}
+      <div className={styles.map__container} ref={mapRef} />
     </div>
   );
 }
