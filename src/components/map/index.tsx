@@ -1,14 +1,26 @@
 import { useEffect, useRef } from 'react';
 import leaflet from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
 import { Offer } from '../../types/offers';
 import useMap from '../../hooks/use-map';
 
 import styles from './styles.module.css';
 
-import icon from 'leaflet/dist/images/marker-icon.png';
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+const defaultIcon = leaflet.icon({
+  iconUrl: 'pin.svg',
+  shadowUrl: iconShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
+
+const activeIcon = leaflet.icon({
+  iconUrl: 'pin-active.svg',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
 
 leaflet.Marker.prototype.options.icon = leaflet.icon({
   iconUrl: icon,
@@ -23,11 +35,12 @@ type MapProps = {
     latitude: number;
     longitude: number;
   };
+  activeOfferId?: string | null;
 };
 
 const DEFAULT_ZOOM = 13;
 
-function Map({ offers, center }: MapProps): JSX.Element {
+function Map({ offers, center, activeOfferId }: MapProps): JSX.Element {
   const mapRef = useRef<HTMLDivElement | null>(null);
 
   const map = useMap({
@@ -45,17 +58,16 @@ function Map({ offers, center }: MapProps): JSX.Element {
 
     offers.forEach((offer) => {
       leaflet
-        .marker([
-          offer.city.location.latitude,
-          offer.city.location.longitude,
-        ])
+        .marker([offer.city.location.latitude, offer.city.location.longitude], {
+          icon: offer.id === activeOfferId ? activeIcon : defaultIcon,
+        })
         .addTo(markersLayer);
     });
 
     return () => {
       map.removeLayer(markersLayer);
     };
-  }, [map, offers]);
+  }, [map, offers, activeOfferId]);
 
   return (
     <div className={styles.map}>
