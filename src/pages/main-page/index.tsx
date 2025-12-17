@@ -1,15 +1,16 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 
-import { Offer } from '../../types/offers';
 import OffersList from '../../components/offers-list';
 import Map from '../../components/map';
+import { RootState } from '../../store';
+import CitiesList from '../../components/cities-list';
 
-type MainPageProps = {
-  offers: Offer[];
-};
+const MainPage: React.FC = () => {
+  const { city, offers } = useSelector((state: RootState) => state.app);
 
-const MainPage: React.FC<MainPageProps> = ({ offers }) => {
-  const cityLocation = offers[0]?.city.location;
+  const filteredOffers = offers.filter((offer) => offer.city.name === city);
+  const cityLocation = filteredOffers[0]?.city.location;
 
   return (
     <div className="page page--gray page--main">
@@ -60,41 +61,7 @@ const MainPage: React.FC<MainPageProps> = ({ offers }) => {
 
         <div className="tabs">
           <section className="locations container">
-            <ul className="locations__list tabs__list">
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
-                  <span>Paris</span>
-                </a>
-              </li>
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
-                  <span>Cologne</span>
-                </a>
-              </li>
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
-                  <span>Brussels</span>
-                </a>
-              </li>
-              <li className="locations__item">
-                <a
-                  className="locations__item-link tabs__item tabs__item--active"
-                  href="#"
-                >
-                  <span>Amsterdam</span>
-                </a>
-              </li>
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
-                  <span>Hamburg</span>
-                </a>
-              </li>
-              <li className="locations__item">
-                <a className="locations__item-link tabs__item" href="#">
-                  <span>Dusseldorf</span>
-                </a>
-              </li>
-            </ul>
+            <CitiesList />
           </section>
         </div>
 
@@ -103,7 +70,7 @@ const MainPage: React.FC<MainPageProps> = ({ offers }) => {
             <section className="cities__places places">
               <h2 className="visually-hidden">Places</h2>
               <b className="places__found">
-                {offers.length} places to stay in Amsterdam
+                {filteredOffers.length} places to stay in {city}
               </b>
 
               <form className="places__sorting" action="#" method="get">
@@ -140,7 +107,9 @@ const MainPage: React.FC<MainPageProps> = ({ offers }) => {
 
             <div className="cities__right-section">
               <section className="cities__map map">
-                {cityLocation && <Map offers={offers} center={cityLocation} />}
+                {cityLocation && (
+                  <Map offers={filteredOffers} center={cityLocation} />
+                )}
               </section>
             </div>
           </div>
