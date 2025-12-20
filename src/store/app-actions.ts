@@ -1,8 +1,11 @@
+import axios from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { setOffers } from './reducer';
+
+import { setAuthorizationStatus, setCurrentUser, setOffers } from './reducer';
 import { Offer, OfferDescription } from '../types/offers';
-import { api } from '../services/api';
+import { api, TOKEN_KEY } from '../services/api';
 import { NewCommentData, Review } from '../types/review';
+import { AuthInfo, LoginData, LoginResponse } from '../types/auth';
 
 export const fetchOffers = createAsyncThunk<
   void,
@@ -81,11 +84,58 @@ export const fetchFavoriteOffers = createAsyncThunk<Offer[]>(
 export const toggleFavoriteStatus = createAsyncThunk<
   Offer,
   { offerId: string; status: 0 | 1 }
->('app/toggleFavoriteStatus', async ({ offerId, status }, { rejectWithValue }) => {
-  try {
-    const response = await api.post<Offer>(`/six-cities/favorite/${offerId}/${status}`);
-    return response.data;
-  } catch (error) {
-    return rejectWithValue('Failed to update favorite status');
+>(
+  'app/toggleFavoriteStatus',
+  async ({ offerId, status }, { rejectWithValue }) => {
+    try {
+      const response = await api.post<Offer>(`/favorite/${offerId}/${status}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue('Failed to update favorite status');
+    }
   }
-});
+);
+
+export const login = createAsyncThunk<void, LoginData>(
+  'app/login',
+  async (authData, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await api.post<LoginResponse>('/login', authData);
+
+      const token = response.data.token;
+      localStorage.setItem(TOKEN_KEY, token);
+
+      dispatch(setAuthorizationStatus('AUTH'));
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        dispatch(setAuthorizationStatus('NO_AUTH'));
+      }
+      return rejectWithValue('Login failed');
+    }
+  }
+);
+
+export const checkAuth = createAsyncThunk<void>(
+  'app/checkAuth',
+  async (_, { dispatch }) => {
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (!token) {
+      dispatch(setAuthorizationStatus('NO_AUTH'));
+      dispatch(setCurrentUser(null));
+      return;
+    }
+
+    try {
+      api.defaults.headers.common['X-Token'] = token;
+
+      const response = await api.get<AuthInfo>('/login');
+      dispatch(setAuthorizationStatus('AUTH'));
+      dispatch(setCurrentUser(response.data));
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        dispatch(setAuthorizationStatus('NO_AUTH'));
+        dispatch(setCurrentUser(null));
+      }
+    }
+  }
+);
