@@ -10,14 +10,14 @@ import useMap from '../../hooks/use-map';
 import styles from './styles.module.css';
 
 const defaultIcon = leaflet.icon({
-  iconUrl: 'pin.svg',
+  iconUrl: 'public/img/pin.svg',
   shadowUrl: iconShadow,
   iconSize: [25, 41],
   iconAnchor: [12, 41],
 });
 
 const activeIcon = leaflet.icon({
-  iconUrl: 'pin-active.svg',
+  iconUrl: 'public/img/pin-active.svg',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
 });
@@ -58,7 +58,7 @@ function Map({ offers, center, activeOfferId }: MapProps): JSX.Element {
 
     offers.forEach((offer) => {
       leaflet
-        .marker([offer.city.location.latitude, offer.city.location.longitude], {
+        .marker([offer.location.latitude, offer.location.longitude], {
           icon: offer.id === activeOfferId ? activeIcon : defaultIcon,
         })
         .addTo(markersLayer);

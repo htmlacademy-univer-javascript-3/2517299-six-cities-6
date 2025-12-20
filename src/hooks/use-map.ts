@@ -25,6 +25,15 @@ function useMap({ mapRef, location, zoom }: UseMapProps): leaflet.Map | null {
     }
   }, [mapRef, location, zoom]);
 
+  useEffect(() => {
+    if (mapInstanceRef.current !== null) {
+      mapInstanceRef.current.setView(
+        [location.latitude, location.longitude],
+        zoom
+      );
+    }
+  }, [location, zoom]);
+
   return mapInstanceRef.current;
 }
 

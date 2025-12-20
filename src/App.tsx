@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import MainPage from './pages/main-page';
@@ -7,14 +7,18 @@ import FavoritesPage from './pages/favorites-page';
 import OfferPage from './pages/offer-page';
 import NotFoundPage from './pages/not-found-page';
 import PrivateRoute from './private-route';
-import { Offer } from './types/offers';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from './store';
+import { fetchOffers } from './store/app-actions';
 
-type AppProps = {
-  offers: Offer[];
-};
-
-const App: React.FC<AppProps> = ({ offers }) => {
+const App: React.FC = () => {
   const isAuthorized = false;
+
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(fetchOffers());
+  }, [dispatch]);
 
   return (
     <BrowserRouter>
@@ -25,11 +29,11 @@ const App: React.FC<AppProps> = ({ offers }) => {
           path="/favorites"
           element={
             <PrivateRoute isAuthorized={isAuthorized}>
-              <FavoritesPage offers={offers} />
+              <FavoritesPage />
             </PrivateRoute>
           }
         />
-        <Route path="/offer/:id" element={<OfferPage offers={offers} />} />
+        <Route path="/offer/:id" element={<OfferPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>

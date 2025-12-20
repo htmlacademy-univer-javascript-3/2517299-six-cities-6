@@ -1,9 +1,9 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-
-type ReviewFormData = {
-  rating: number;
-  review: string;
-};
+import { AppDispatch } from '../../store';
+import { useDispatch } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { postOfferComment } from '../../store/app-actions';
+import { NewCommentData } from '../../types/review';
 
 const getRatingTitle = (star: number): string => {
   switch (star) {
@@ -23,25 +23,51 @@ const getRatingTitle = (star: number): string => {
 };
 
 const ReviewForm: React.FC = () => {
-  const [formData, setFormData] = useState<ReviewFormData>({
+  const [formData, setFormData] = useState<NewCommentData>({
     rating: 0,
-    review: '',
+    comment: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const dispatch = useDispatch<AppDispatch>();
+  const { id } = useParams<{ id: string }>();
 
   const handleRatingChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, rating: Number(e.target.value) });
   };
 
   const handleReviewChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setFormData({ ...formData, review: e.target.value });
+    setFormData({ ...formData, comment: e.target.value });
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setFormData({ rating: 0, review: '' });
+    if (!id) {
+      return;
+    }
+
+    const submit = async () => {
+      setIsSubmitting(true);
+      try {
+        await dispatch(
+          postOfferComment({
+            offerId: id,
+            data: { comment: formData.comment, rating: formData.rating },
+          })
+        ).unwrap();
+        setFormData({ rating: 0, comment: '' });
+      } finally {
+        setIsSubmitting(false);
+      }
+    };
+
+    void submit();
   };
 
-  const isSubmitDisabled = formData.rating === 0 || formData.review.length < 50;
+  const isReviewValid =
+    formData.rating > 0 &&
+    formData.comment.length >= 50 &&
+    formData.comment.length <= 300;
 
   return (
     <form className="reviews__form form" onSubmit={handleSubmit}>
@@ -60,6 +86,7 @@ const ReviewForm: React.FC = () => {
               type="radio"
               checked={formData.rating === star}
               onChange={handleRatingChange}
+              disabled={isSubmitting}
             />
             <label
               htmlFor={`${star}-stars`}
@@ -79,7 +106,7 @@ const ReviewForm: React.FC = () => {
         id="review"
         name="review"
         placeholder="Tell how was your stay, what you like and what can be improved"
-        value={formData.review}
+        value={formData.comment}
         onChange={handleReviewChange}
       />
 
@@ -92,7 +119,7 @@ const ReviewForm: React.FC = () => {
         <button
           className="reviews__submit form__submit button"
           type="submit"
-          disabled={isSubmitDisabled}
+          disabled={!isReviewValid || isSubmitting}
         >
           Submit
         </button>
