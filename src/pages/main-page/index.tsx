@@ -18,6 +18,7 @@ const MainPage: React.FC = () => {
     (state: RootState) => state.app
   );
 
+
   const filteredOffers = offers.filter((offer) => offer.city.name === city);
   const sortedOffers = useSortedOffers(filteredOffers, sortType as SortingType);
   const cityLocation = sortedOffers[0]?.city.location;
