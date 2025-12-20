@@ -9,8 +9,11 @@ import {
   toggleFavoriteStatus,
 } from './app-actions';
 import { Review } from '../types/review';
+import { AuthInfo, AuthorizationStatus } from '../types/auth';
 
 type AppState = {
+  authorizationStatus: AuthorizationStatus;
+  currentUser: AuthInfo | null;
   city: string;
   offers: Offer[];
   activeOfferId: string | null;
@@ -26,6 +29,8 @@ type AppState = {
 };
 
 const initialState: AppState = {
+  authorizationStatus: 'NO_AUTH',
+  currentUser: null,
   city: 'Paris',
   offers: [],
   activeOfferId: null,
@@ -51,6 +56,12 @@ const appSlice = createSlice({
     },
     setSortType(state, action: PayloadAction<AppState['sortType']>) {
       state.sortType = action.payload;
+    },
+    setAuthorizationStatus(state, action: PayloadAction<AuthorizationStatus>) {
+      state.authorizationStatus = action.payload;
+    },
+    setCurrentUser(state, action: PayloadAction<AuthInfo | null>) {
+      state.currentUser = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -93,10 +104,23 @@ const appSlice = createSlice({
         state.nearbyOffers = state.nearbyOffers.map((offer) =>
           offer.id === updatedOffer.id ? updatedOffer : offer
         );
+        if (updatedOffer.isFavorite) {
+          state.favoriteOffers.push(updatedOffer);
+        } else {
+          state.favoriteOffers = state.favoriteOffers.filter(
+            (offer) => offer.id !== updatedOffer.id
+          );
+        }
       });
   },
 });
 
-export const { setCity, setOffers, setActiveOfferId, setSortType } =
-  appSlice.actions;
+export const {
+  setCity,
+  setOffers,
+  setActiveOfferId,
+  setSortType,
+  setAuthorizationStatus,
+  setCurrentUser,
+} = appSlice.actions;
 export default appSlice.reducer;

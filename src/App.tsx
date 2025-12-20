@@ -9,14 +9,13 @@ import NotFoundPage from './pages/not-found-page';
 import PrivateRoute from './private-route';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from './store';
-import { fetchOffers } from './store/app-actions';
+import { checkAuth, fetchOffers } from './store/app-actions';
 
 const App: React.FC = () => {
-  const isAuthorized = false;
-
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
+    dispatch(checkAuth());
     dispatch(fetchOffers());
   }, [dispatch]);
 
@@ -28,7 +27,7 @@ const App: React.FC = () => {
         <Route
           path="/favorites"
           element={
-            <PrivateRoute isAuthorized={isAuthorized}>
+            <PrivateRoute>
               <FavoritesPage />
             </PrivateRoute>
           }

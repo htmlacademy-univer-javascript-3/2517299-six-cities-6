@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import OffersList from '../../components/offers-list';
@@ -8,16 +8,30 @@ import CitiesList from '../../components/cities-list';
 import SortingOptions, { SortingType } from '../../components/sorting-options';
 import { setSortType } from '../../store/reducer';
 import { useSortedOffers } from '../../hooks/use-sorted-offers';
+import { Link } from 'react-router-dom';
+import { fetchFavoriteOffers } from '../../store/app-actions';
 
 const MainPage: React.FC = () => {
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const { city, offers, sortType } = useSelector(
-    (state: RootState) => state.app
-  );
+  const {
+    city,
+    offers,
+    sortType,
+    authorizationStatus,
+    currentUser,
+    favoriteOffers,
+  } = useSelector((state: RootState) => state.app);
 
+  const isAuthorized = authorizationStatus === 'AUTH';
+
+  useEffect(() => {
+    if (isAuthorized) {
+      dispatch(fetchFavoriteOffers());
+    }
+  }, [dispatch, isAuthorized]);
 
   const filteredOffers = offers.filter((offer) => offer.city.name === city);
   const sortedOffers = useSortedOffers(filteredOffers, sortType as SortingType);
@@ -44,23 +58,44 @@ const MainPage: React.FC = () => {
             </div>
             <nav className="header__nav">
               <ul className="header__nav-list">
-                <li className="header__nav-item user">
-                  <a
-                    className="header__nav-link header__nav-link--profile"
-                    href="#"
-                  >
-                    <div className="header__avatar-wrapper user__avatar-wrapper"></div>
-                    <span className="header__user-name user__name">
-                      Oliver.conner@gmail.com
-                    </span>
-                    <span className="header__favorite-count">3</span>
-                  </a>
-                </li>
-                <li className="header__nav-item">
-                  <a className="header__nav-link" href="#">
-                    <span className="header__signout">Sign out</span>
-                  </a>
-                </li>
+                {isAuthorized && currentUser ? (
+                  <>
+                    <li className="header__nav-item user">
+                      <Link
+                        className="header__nav-link header__nav-link--profile"
+                        to="/favorites"
+                      >
+                        <div
+                          className="header__avatar-wrapper user__avatar-wrapper"
+                          style={{
+                            backgroundImage: `url(${currentUser.avatarUrl})`,
+                          }}
+                        />
+                        <span className="header__user-name user__name">
+                          {currentUser.email}
+                        </span>
+                      </Link>
+                      <span className="header__favorite-count">{favoriteOffers.length}</span>
+                    </li>
+                    <li className="header__nav-item">
+                      <button
+                        className="header__nav-link header__signout"
+                        onClick={() => {
+                          localStorage.removeItem('six-cities-token');
+                          window.location.reload();
+                        }}
+                      >
+                        Sign out
+                      </button>
+                    </li>
+                  </>
+                ) : (
+                  <li className="header__nav-item">
+                    <a className="header__nav-link" href="/login">
+                      Sign in
+                    </a>
+                  </li>
+                )}
               </ul>
             </nav>
           </div>
