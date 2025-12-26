@@ -1,24 +1,38 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState, AppDispatch } from '../../store';
-import { setCity } from '../../store/reducer';
+import { AppDispatch } from '../../store';
+import { selectCity } from '../../store/offers/offers.selectors';
+import { setCity } from '../../store/offers/offers.slice';
 
-const cities = ['Paris', 'Cologne', 'Brussels', 'Amsterdam', 'Hamburg', 'Dusseldorf'];
+const cities = [
+  'Paris',
+  'Cologne',
+  'Brussels',
+  'Amsterdam',
+  'Hamburg',
+  'Dusseldorf',
+];
 
 const CitiesList: React.FC = () => {
-  const selectedCity = useSelector((state: RootState) => state.app.city);
+  const selectedCity = useSelector(selectCity);
+
   const dispatch = useDispatch<AppDispatch>();
 
-  const handleCityClick = (city: string) => {
-    dispatch(setCity(city));
-  };
+  const handleCityClick = useCallback(
+    (city: string) => {
+      dispatch(setCity(city));
+    },
+    [dispatch]
+  );
 
   return (
     <ul className="locations__list tabs__list">
       {cities.map((city) => (
         <li key={city} className="locations__item">
           <a
-            className={`locations__item-link tabs__item ${city === selectedCity ? 'tabs__item--active' : ''}`}
+            className={`locations__item-link tabs__item ${
+              city === selectedCity ? 'tabs__item--active' : ''
+            }`}
             href="#"
             onClick={(e) => {
               e.preventDefault();

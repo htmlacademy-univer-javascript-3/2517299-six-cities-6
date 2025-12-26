@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import OffersList from '../../components/offers-list';
@@ -6,101 +6,52 @@ import Map from '../../components/map';
 import { AppDispatch, RootState } from '../../store';
 import CitiesList from '../../components/cities-list';
 import SortingOptions, { SortingType } from '../../components/sorting-options';
-import { setSortType } from '../../store/reducer';
-import { useSortedOffers } from '../../hooks/use-sorted-offers';
-import { Link } from 'react-router-dom';
-import { fetchFavoriteOffers } from '../../store/app-actions';
+import { selectSortedOffers } from '../../store/offers/offers.selectors';
+import { setSortType } from '../../store/offers/offers.slice';
+import { useFetchFavoritesIfAuth } from '../../hooks/use-fetch-favorites';
+import Header from '../../components/header';
 
 const MainPage: React.FC = () => {
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const {
-    city,
-    offers,
-    sortType,
-    authorizationStatus,
-    currentUser,
-    favoriteOffers,
-  } = useSelector((state: RootState) => state.app);
+  const { city, offers, sortType, favoriteOffers } = useSelector(
+    (state: RootState) => state.offers
+  );
+
+  const { authorizationStatus, user } = useSelector(
+    (state: RootState) => state.auth
+  );
 
   const isAuthorized = authorizationStatus === 'AUTH';
 
-  useEffect(() => {
-    if (isAuthorized) {
-      dispatch(fetchFavoriteOffers());
-    }
-  }, [dispatch, isAuthorized]);
+  useFetchFavoritesIfAuth();
 
   const filteredOffers = offers.filter((offer) => offer.city.name === city);
-  const sortedOffers = useSortedOffers(filteredOffers, sortType as SortingType);
-  const cityLocation = sortedOffers[0]?.city.location;
+  const sortedOffers = useSelector(selectSortedOffers);
+
+  const cityLocation = useMemo(
+    () => sortedOffers[0]?.city.location,
+    [sortedOffers]
+  );
+
+  const handleOfferHover = useCallback((id: string | null) => {
+    setActiveOfferId(id);
+  }, []);
+
+  const handleSortChange = useCallback(
+    (type: SortingType) => dispatch(setSortType(type)),
+    [dispatch]
+  );
 
   return (
     <div className="page page--gray page--main">
-      <header className="header">
-        <div className="container">
-          <div className="header__wrapper">
-            <div className="header__left">
-              <a
-                className="header__logo-link header__logo-link--active"
-                href="#"
-              >
-                <img
-                  className="header__logo"
-                  src="img/logo.svg"
-                  alt="6 cities logo"
-                  width="81"
-                  height="41"
-                />
-              </a>
-            </div>
-            <nav className="header__nav">
-              <ul className="header__nav-list">
-                {isAuthorized && currentUser ? (
-                  <>
-                    <li className="header__nav-item user">
-                      <Link
-                        className="header__nav-link header__nav-link--profile"
-                        to="/favorites"
-                      >
-                        <div
-                          className="header__avatar-wrapper user__avatar-wrapper"
-                          style={{
-                            backgroundImage: `url(${currentUser.avatarUrl})`,
-                          }}
-                        />
-                        <span className="header__user-name user__name">
-                          {currentUser.email}
-                        </span>
-                      </Link>
-                      <span className="header__favorite-count">{favoriteOffers.length}</span>
-                    </li>
-                    <li className="header__nav-item">
-                      <button
-                        className="header__nav-link header__signout"
-                        onClick={() => {
-                          localStorage.removeItem('six-cities-token');
-                          window.location.reload();
-                        }}
-                      >
-                        Sign out
-                      </button>
-                    </li>
-                  </>
-                ) : (
-                  <li className="header__nav-item">
-                    <a className="header__nav-link" href="/login">
-                      Sign in
-                    </a>
-                  </li>
-                )}
-              </ul>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Header
+        isAuthorized={isAuthorized}
+        user={user}
+        favoriteCount={favoriteOffers?.length ?? 0}
+      />
 
       <main className="page__main page__main--index">
         <h1 className="visually-hidden">Cities</h1>
@@ -121,11 +72,11 @@ const MainPage: React.FC = () => {
 
               <SortingOptions
                 currentSort={sortType as SortingType}
-                onChangeSort={(type) => dispatch(setSortType(type))}
+                onChangeSort={handleSortChange}
               />
 
               <div className="cities__places-list places__list tabs__content">
-                <OffersList offers={sortedOffers} onHover={setActiveOfferId} />
+                <OffersList offers={sortedOffers} onHover={handleOfferHover} />
               </div>
             </section>
 
