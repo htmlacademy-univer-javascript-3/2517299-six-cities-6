@@ -10,14 +10,14 @@ import useMap from '../../hooks/use-map';
 import styles from './styles.module.css';
 
 const defaultIcon = leaflet.icon({
-  iconUrl: 'public/img/pin.svg',
+  iconUrl: 'img/pin.svg',
   shadowUrl: iconShadow,
   iconSize: [25, 41],
   iconAnchor: [12, 41],
 });
 
 const activeIcon = leaflet.icon({
-  iconUrl: 'public/img/pin-active.svg',
+  iconUrl: 'img/pin-active.svg',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
 });

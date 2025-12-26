@@ -1,20 +1,31 @@
 import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import ReviewForm from '../../components/review-form';
 import ReviewsList from '../../components/review-list';
 import Map from '../../components/map';
 import OffersList from '../../components/offers-list';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store';
-import { fetchNearbyOffers, fetchOfferById, fetchOfferCommentsById } from '../../store/app-actions';
+import {
+  fetchNearbyOffers,
+  fetchOfferById,
+  fetchOfferCommentsById,
+} from '../../store/app-actions';
+import { useFavorite } from '../../hooks/use-favorite';
 
 const OfferPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { currentOffer, nearbyOffers, comments } = useSelector(
-    (state: RootState) => state.app
-  );
+  const {
+    currentOffer,
+    isOfferNotFound,
+    nearbyOffers,
+    comments,
+    authorizationStatus,
+  } = useSelector((state: RootState) => state.app);
+
+  const { toggleFavorite } = useFavorite();
 
   useEffect(() => {
     if (id) {
@@ -25,6 +36,12 @@ const OfferPage: React.FC = () => {
   }, [dispatch, id]);
 
   const nearbyOffersToShow = nearbyOffers.slice(0, 3);
+
+  const isAuthorized = authorizationStatus === 'AUTH';
+
+  if (isOfferNotFound) {
+    return <Navigate to="/404" replace />;
+  }
 
   return (
     <div className="page">
@@ -71,7 +88,7 @@ const OfferPage: React.FC = () => {
         <section className="offer">
           <div className="offer__gallery-container container">
             <div className="offer__gallery">
-              {currentOffer?.images.map((image) => (
+              {currentOffer?.images.slice(0, 6).map((image) => (
                 <div key={image} className="offer__image-wrapper">
                   <img className="offer__image" src={image} alt="Interior" />
                 </div>
@@ -87,7 +104,17 @@ const OfferPage: React.FC = () => {
               )}
               <div className="offer__name-wrapper">
                 <h1 className="offer__name">{currentOffer?.title}</h1>
-                <button className="offer__bookmark-button button" type="button">
+                <button
+                  className={`offer__bookmark-button button ${
+                    currentOffer?.isFavorite
+                      ? 'offer__bookmark-button--active'
+                      : ''
+                  }`}
+                  type="button"
+                  onClick={() =>
+                    currentOffer &&
+                    toggleFavorite(currentOffer.id, currentOffer.isFavorite)}
+                >
                   <svg className="offer__bookmark-icon" width="31" height="33">
                     <use xlinkHref="#icon-bookmark"></use>
                   </svg>
@@ -108,10 +135,12 @@ const OfferPage: React.FC = () => {
                   {currentOffer?.type}
                 </li>
                 <li className="offer__feature offer__feature--bedrooms">
-                  {currentOffer?.bedrooms}
+                  {currentOffer?.bedrooms}{' '}
+                  {currentOffer?.bedrooms === 1 ? 'Bedroom' : 'Bedrooms'}
                 </li>
                 <li className="offer__feature offer__feature--adults">
-                  {currentOffer?.maxAdults}
+                  {'Max'} {currentOffer?.maxAdults}{' '}
+                  {currentOffer?.maxAdults === 1 ? 'Adult' : 'Adults'}
                 </li>
               </ul>
               <div className="offer__price">
@@ -154,14 +183,17 @@ const OfferPage: React.FC = () => {
                 </div>
               </div>
               <section className="offer__reviews reviews">
-                <ReviewsList reviews={comments}/>
-                <ReviewForm />
+                <ReviewsList reviews={comments} />
+                {isAuthorized && <ReviewForm />}
               </section>
             </div>
           </div>
           <section className="offer__map map">
             {currentOffer && (
-              <Map offers={nearbyOffers} center={currentOffer.city.location} />
+              <Map
+                offers={nearbyOffersToShow}
+                center={currentOffer.city.location}
+              />
             )}
           </section>
         </section>

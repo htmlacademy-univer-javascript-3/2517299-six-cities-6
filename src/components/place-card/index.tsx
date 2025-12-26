@@ -1,9 +1,7 @@
 import React from 'react';
 import { Offer } from '../../types/offers';
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../../store';
-import { toggleFavoriteStatus } from '../../store/app-actions';
+import { useFavorite } from '../../hooks/use-favorite';
 
 type PlaceCardProps = {
   offer: Offer;
@@ -11,12 +9,7 @@ type PlaceCardProps = {
 };
 
 const PlaceCard: React.FC<PlaceCardProps> = ({ offer, onHover }) => {
-  const dispatch = useDispatch<AppDispatch>();
-
-  const handleBookmarkClick = () => {
-    const status: 0 | 1 = offer.isFavorite ? 0 : 1;
-    dispatch(toggleFavoriteStatus({ offerId: offer.id, status }));
-  };
+  const { toggleFavorite } = useFavorite();
 
   return (
     <article
@@ -50,7 +43,8 @@ const PlaceCard: React.FC<PlaceCardProps> = ({ offer, onHover }) => {
             className={`place-card__bookmark-button button ${
               offer.isFavorite ? 'place-card__bookmark-button--active' : ''
             }`}
-            onClick={handleBookmarkClick}
+            onClick={() =>
+              offer && toggleFavorite(offer.id, offer.isFavorite)}
             type="button"
           >
             <svg className="place-card__bookmark-icon" width="18" height="19">
