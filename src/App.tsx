@@ -9,7 +9,8 @@ import NotFoundPage from './pages/not-found-page';
 import PrivateRoute from './private-route';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from './store';
-import { checkAuth, fetchOffers } from './store/app-actions';
+import { checkAuth } from './store/auth/auth.thunks';
+import { fetchOffers } from './store/offers/offers.thunks';
 
 const App: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();

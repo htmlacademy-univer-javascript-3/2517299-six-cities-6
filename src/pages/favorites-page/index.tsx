@@ -1,54 +1,32 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import FavoritesList from '../../components/favorites-list';
-import { RootState } from '../../store';
-import { useSelector } from 'react-redux';
-
+import { AppDispatch, RootState } from '../../store';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchFavoriteOffers } from '../../store/offers/offers.thunks';
+import Header from '../../components/header';
 
 const FavoritesPage: React.FC = () => {
-  const offers = useSelector((state: RootState) => state.app.offers);
+  const dispatch = useDispatch<AppDispatch>();
 
-  const favoriteOffers = offers.filter((offer) => offer.isFavorite);
+  const { favoriteOffers } = useSelector((state: RootState) => state.offers);
+  const { authorizationStatus, user } = useSelector(
+    (state: RootState) => state.auth
+  );
+  const isAuthorized = authorizationStatus === 'AUTH';
+
+  useEffect(() => {
+    if (isAuthorized) {
+      dispatch(fetchFavoriteOffers());
+    }
+  }, [dispatch, isAuthorized]);
 
   return (
     <div className="page">
-      <header className="header">
-        <div className="container">
-          <div className="header__wrapper">
-            <div className="header__left">
-              <a className="header__logo-link" href="main.html">
-                <img
-                  className="header__logo"
-                  src="img/logo.svg"
-                  alt="6 cities logo"
-                  width="81"
-                  height="41"
-                />
-              </a>
-            </div>
-            <nav className="header__nav">
-              <ul className="header__nav-list">
-                <li className="header__nav-item user">
-                  <a
-                    className="header__nav-link header__nav-link--profile"
-                    href="#"
-                  >
-                    <div className="header__avatar-wrapper user__avatar-wrapper"></div>
-                    <span className="header__user-name user__name">
-                      Oliver.conner@gmail.com
-                    </span>
-                    <span className="header__favorite-count">3</span>
-                  </a>
-                </li>
-                <li className="header__nav-item">
-                  <a className="header__nav-link" href="#">
-                    <span className="header__signout">Sign out</span>
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Header
+        isAuthorized={isAuthorized}
+        user={user}
+        favoriteCount={favoriteOffers.length}
+      />
 
       <main className="page__main page__main--favorites">
         <div className="page__favorites-container container">

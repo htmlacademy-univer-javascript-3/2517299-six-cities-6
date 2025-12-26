@@ -1,88 +1,49 @@
-import React, { useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import ReviewForm from '../../components/review-form';
 import ReviewsList from '../../components/review-list';
 import Map from '../../components/map';
 import OffersList from '../../components/offers-list';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../store';
-import {
-  fetchNearbyOffers,
-  fetchOfferById,
-  fetchOfferCommentsById,
-} from '../../store/app-actions';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
 import { useFavorite } from '../../hooks/use-favorite';
+import { useFetchOfferData } from '../../hooks/use-fetch-offer-data';
+import Header from '../../components/header';
 
 const OfferPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const dispatch = useDispatch<AppDispatch>();
 
-  const {
-    currentOffer,
-    isOfferNotFound,
-    nearbyOffers,
-    comments,
-    authorizationStatus,
-  } = useSelector((state: RootState) => state.app);
+  const { authorizationStatus, user } = useSelector(
+    (state: RootState) => state.auth
+  );
+  const { currentOffer, isNotFound, nearbyOffers, comments } = useSelector(
+    (state: RootState) => state.offer
+  );
+
+  const { favoriteOffers } = useSelector((state: RootState) => state.offers);
 
   const { toggleFavorite } = useFavorite();
 
-  useEffect(() => {
-    if (id) {
-      dispatch(fetchOfferById(id));
-      dispatch(fetchNearbyOffers(id));
-      dispatch(fetchOfferCommentsById(id));
-    }
-  }, [dispatch, id]);
-
-  const nearbyOffersToShow = nearbyOffers.slice(0, 3);
-
   const isAuthorized = authorizationStatus === 'AUTH';
 
-  if (isOfferNotFound) {
+  useFetchOfferData(id);
+
+  const nearbyOffersToShow = useMemo(
+    () => nearbyOffers.slice(0, 3),
+    [nearbyOffers]
+  );
+
+  if (isNotFound) {
     return <Navigate to="/404" replace />;
   }
 
   return (
     <div className="page">
-      <header className="header">
-        <div className="container">
-          <div className="header__wrapper">
-            <div className="header__left">
-              <a className="header__logo-link" href="/">
-                <img
-                  className="header__logo"
-                  src="img/logo.svg"
-                  alt="6 cities logo"
-                  width="81"
-                  height="41"
-                />
-              </a>
-            </div>
-            <nav className="header__nav">
-              <ul className="header__nav-list">
-                <li className="header__nav-item user">
-                  <a
-                    className="header__nav-link header__nav-link--profile"
-                    href="#"
-                  >
-                    <div className="header__avatar-wrapper user__avatar-wrapper"></div>
-                    <span className="header__user-name user__name">
-                      Oliver.conner@gmail.com
-                    </span>
-                    <span className="header__favorite-count">3</span>
-                  </a>
-                </li>
-                <li className="header__nav-item">
-                  <a className="header__nav-link" href="#">
-                    <span className="header__signout">Sign out</span>
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Header
+        isAuthorized={isAuthorized}
+        user={user}
+        favoriteCount={favoriteOffers?.length ?? 0}
+      />
 
       <main className="page__main page__main--offer">
         <section className="offer">

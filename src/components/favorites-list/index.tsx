@@ -1,3 +1,4 @@
+import React, { memo, useMemo } from 'react';
 import { Offer } from '../../types/offers';
 import PlaceCard from '../place-card';
 
@@ -5,10 +6,23 @@ type FavoritesListProps = {
   offers: Offer[];
 };
 
-function FavoritesList({ offers }: FavoritesListProps): JSX.Element {
-  const cities = Array.from(
-    new Set(offers.map((offer) => offer.city.name))
-  ).sort();
+const FavoritesList: React.FC<FavoritesListProps> = ({ offers }) => {
+  const offersByCity = useMemo(() => {
+    const grouped: Record<string, Offer[]> = {};
+    offers.forEach((offer) => {
+      const city = offer.city.name;
+      if (!grouped[city]) {
+        grouped[city] = [];
+      }
+      grouped[city].push(offer);
+    });
+    return grouped;
+  }, [offers]);
+
+  const cities = useMemo(
+    () => Object.keys(offersByCity).sort(),
+    [offersByCity]
+  );
 
   return (
     <ul className="favorites__list">
@@ -22,16 +36,17 @@ function FavoritesList({ offers }: FavoritesListProps): JSX.Element {
             </div>
           </div>
           <div className="favorites__places">
-            {offers
-              .filter((offer) => offer.city.name === city)
-              .map((offer) => (
-                <PlaceCard key={offer.id} offer={offer} />
-              ))}
+            {offersByCity[city].map((offer) => (
+              <PlaceCard key={offer.id} offer={offer} />
+            ))}
           </div>
         </li>
       ))}
     </ul>
   );
-}
+};
 
-export default FavoritesList;
+const MemoFavoritesList = memo(FavoritesList);
+MemoFavoritesList.displayName = 'FavoritesList';
+
+export default MemoFavoritesList;

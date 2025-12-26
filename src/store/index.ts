@@ -1,10 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
-import appReducer from './reducer';
 import { api } from '../services/api';
+import offersReducer from './offers/offers.slice';
+import offerReducer from './offer/offer.slice';
+import authReducer from './auth/auth.slice';
 
 export const store = configureStore({
   reducer: {
-    app: appReducer,
+    offers: offersReducer,
+    offer: offerReducer,
+    auth: authReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

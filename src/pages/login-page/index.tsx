@@ -1,42 +1,29 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../store';
-import { login } from '../../store/app-actions';
+import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
 import { useNavigate } from 'react-router-dom';
+import { useLoginForm } from '../../hooks/use-login-form';
 
 const LoginPage: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const authorizationStatus = useSelector(
-    (state: RootState) => state.app.authorizationStatus
+    (state: RootState) => state.auth.authorizationStatus
   );
 
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  }, []);
 
-  const handleSubmit = async () => {
-    setIsSubmitting(true);
-    setErrorMessage('');
+  const { handleSubmit, isSubmitting, errorMessage } = useLoginForm(formData);
 
-    try {
-      await dispatch(login(formData)).unwrap();
+  useEffect(() => {
+    if (authorizationStatus === 'AUTH') {
       navigate('/');
-    } catch (err) {
-      setErrorMessage('Login failed. Check your email and password.');
-    } finally {
-      setIsSubmitting(false);
     }
-  };
-
-  if (authorizationStatus === 'AUTH') {
-    navigate('/');
-    return null;
-  }
+  }, [authorizationStatus, navigate]);
 
   return (
     <div className="page page--gray page--login">

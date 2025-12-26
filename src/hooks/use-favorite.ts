@@ -1,9 +1,7 @@
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../store';
-import {
-  toggleFavoriteStatus,
-} from '../store/app-actions';
+import { toggleFavoriteStatus } from '../store/offer/offer.thunks';
 
 export const useFavorite = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -15,6 +13,5 @@ export const useFavorite = () => {
     },
     [dispatch]
   );
-
   return { toggleFavorite };
 };

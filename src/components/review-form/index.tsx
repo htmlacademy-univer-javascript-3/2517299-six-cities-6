@@ -2,8 +2,8 @@ import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { AppDispatch } from '../../store';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { postOfferComment } from '../../store/app-actions';
 import { NewCommentData } from '../../types/review';
+import { postOfferComment } from '../../store/offer/offer.thunks';
 
 const getRatingTitle = (star: number): string => {
   switch (star) {
