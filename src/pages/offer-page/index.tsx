@@ -113,8 +113,7 @@ const OfferPage: React.FC = () => {
                   type="button"
                   onClick={() =>
                     currentOffer &&
-                    toggleFavorite(currentOffer.id, currentOffer.isFavorite)
-                  }
+                    toggleFavorite(currentOffer.id, currentOffer.isFavorite)}
                 >
                   <svg className="offer__bookmark-icon" width="31" height="33">
                     <use xlinkHref="#icon-bookmark"></use>
