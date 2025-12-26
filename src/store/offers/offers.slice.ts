@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Offer } from '../../types/offers';
-import { fetchOffers } from './offers.thunks';
+import { fetchFavoriteOffers, fetchOffers } from './offers.thunks';
 
 export type SortingType =
   | 'Popular'
@@ -13,6 +13,7 @@ type OffersState = {
   offers: Offer[];
   sortType: SortingType;
   activeOfferId: string | null;
+  favoriteOffers: Offer[];
 };
 
 const initialState: OffersState = {
@@ -20,6 +21,7 @@ const initialState: OffersState = {
   offers: [],
   sortType: 'Popular',
   activeOfferId: null,
+  favoriteOffers: [],
 };
 
 const offersSlice = createSlice({
@@ -37,13 +39,19 @@ const offersSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchOffers.fulfilled, (state, action) => {
-      state.offers = action.payload;
-    });
+    builder
+      .addCase(fetchOffers.fulfilled, (state, action) => {
+        state.offers = action.payload;
+      })
+      .addCase(
+        fetchFavoriteOffers.fulfilled,
+        (state, action: PayloadAction<Offer[]>) => {
+          state.favoriteOffers = action.payload;
+        }
+      );
   },
 });
 
-export const { setCity, setSortType, setActiveOfferId } =
-  offersSlice.actions;
+export const { setCity, setSortType, setActiveOfferId } = offersSlice.actions;
 
 export default offersSlice.reducer;
