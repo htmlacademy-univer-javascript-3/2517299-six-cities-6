@@ -6,6 +6,7 @@ import {
   fetchNearbyOffers,
   fetchOfferComments,
   postOfferComment,
+  toggleFavoriteStatus,
 } from './offer.thunks';
 
 type OfferState = {
@@ -43,6 +44,20 @@ const offerSlice = createSlice({
       })
       .addCase(postOfferComment.fulfilled, (state, action) => {
         state.comments = action.payload;
+      })
+      .addCase(toggleFavoriteStatus.fulfilled, (state, action) => {
+        const updatedOffer = action.payload;
+
+        if (state.currentOffer?.id === updatedOffer.id) {
+          state.currentOffer.isFavorite = updatedOffer.isFavorite ?? false;
+        }
+
+        const index = state.nearbyOffers.findIndex(
+          (o) => o.id === updatedOffer.id
+        );
+        if (index !== -1) {
+          state.nearbyOffers[index].isFavorite = updatedOffer.isFavorite;
+        }
       });
   },
 });
