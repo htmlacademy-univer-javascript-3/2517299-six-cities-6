@@ -17,6 +17,7 @@ type AppState = {
   city: string;
   offers: Offer[];
   activeOfferId: string | null;
+  isOfferNotFound: boolean;
   sortType:
     | 'Popular'
     | 'Price: low to high'
@@ -34,6 +35,7 @@ const initialState: AppState = {
   city: 'Paris',
   offers: [],
   activeOfferId: null,
+  isOfferNotFound: false,
   sortType: 'Popular',
   currentOffer: null,
   nearbyOffers: [],
@@ -75,8 +77,18 @@ const appSlice = createSlice({
           state.currentOffer = action.payload;
         }
       )
-      .addCase(fetchOfferById.rejected, (state) => {
+      .addCase(fetchOfferById.pending, (state) => {
+        state.isOfferNotFound = false;
         state.currentOffer = null;
+      })
+      .addCase(fetchOfferById.fulfilled, (state, action) => {
+        state.currentOffer = action.payload;
+        state.isOfferNotFound = false;
+      })
+      .addCase(fetchOfferById.rejected, (state, action) => {
+        if (action.payload === 'NOT_FOUND') {
+          state.isOfferNotFound = true;
+        }
       })
       .addCase(fetchNearbyOffers.fulfilled, (state, action) => {
         state.nearbyOffers = action.payload;

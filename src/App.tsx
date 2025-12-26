@@ -34,6 +34,7 @@ const App: React.FC = () => {
         />
         <Route path="/offer/:id" element={<OfferPage />} />
         <Route path="*" element={<NotFoundPage />} />
+        <Route path="/404" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );

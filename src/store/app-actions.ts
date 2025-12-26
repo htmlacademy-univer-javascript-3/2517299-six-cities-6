@@ -20,14 +20,22 @@ export const fetchOffers = createAsyncThunk<
   }
 });
 
-export const fetchOfferById = createAsyncThunk<OfferDescription, string>(
+export const fetchOfferById = createAsyncThunk<
+  OfferDescription,
+  string,
+  { rejectValue: 'NOT_FOUND' | 'ERROR' }
+>(
   'app/fetchOfferById',
   async (offerId, { rejectWithValue }) => {
     try {
       const response = await api.get<OfferDescription>(`/offers/${offerId}`);
       return response.data;
     } catch (error) {
-      return rejectWithValue('Failed to fetch offer');
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
+        return rejectWithValue('NOT_FOUND');
+      }
+
+      return rejectWithValue('ERROR');
     }
   }
 );
