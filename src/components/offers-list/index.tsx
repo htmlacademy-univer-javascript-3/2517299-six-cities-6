@@ -3,7 +3,7 @@ import PlaceCard from '../place-card';
 
 type OffersListProps = {
   offers: Offer[];
-  isAuthorized: boolean;
+  isAuthorized?: boolean;
   onHover?: (id: string | null) => void;
 };
 
