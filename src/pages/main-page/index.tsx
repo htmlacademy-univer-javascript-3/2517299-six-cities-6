@@ -10,6 +10,7 @@ import { selectSortedOffers } from '../../store/offers/offers.selectors';
 import { setSortType } from '../../store/offers/offers.slice';
 import { useFetchFavoritesIfAuth } from '../../hooks/use-fetch-favorites';
 import Header from '../../components/header';
+import MainEmpty from '../main-empty-page';
 
 const MainPage: React.FC = () => {
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
@@ -45,6 +46,8 @@ const MainPage: React.FC = () => {
     [dispatch]
   );
 
+  const hasOffers = filteredOffers.length > 0;
+
   return (
     <div className="page page--gray page--main">
       <Header
@@ -53,47 +56,55 @@ const MainPage: React.FC = () => {
         favoriteCount={favoriteOffers?.length ?? 0}
       />
 
-      <main className="page__main page__main--index">
-        <h1 className="visually-hidden">Cities</h1>
+      {hasOffers ? (
+        <main className="page__main page__main--index">
+          <h1 className="visually-hidden">Cities</h1>
 
-        <div className="tabs">
-          <section className="locations container">
-            <CitiesList />
-          </section>
-        </div>
-
-        <div className="cities">
-          <div className="cities__places-container container">
-            <section className="cities__places places">
-              <h2 className="visually-hidden">Places</h2>
-              <b className="places__found">
-                {filteredOffers.length} places to stay in {city}
-              </b>
-
-              <SortingOptions
-                currentSort={sortType as SortingType}
-                onChangeSort={handleSortChange}
-              />
-
-              <div className="cities__places-list places__list tabs__content">
-                <OffersList offers={sortedOffers} onHover={handleOfferHover} />
-              </div>
+          <div className="tabs">
+            <section className="locations container">
+              <CitiesList />
             </section>
+          </div>
 
-            <div className="cities__right-section">
-              <section className="cities__map map">
-                {cityLocation && (
-                  <Map
+          <div className="cities">
+            <div className="cities__places-container container">
+              <section className="cities__places places">
+                <h2 className="visually-hidden">Places</h2>
+                <b className="places__found">
+                  {filteredOffers.length} places to stay in {city}
+                </b>
+
+                <SortingOptions
+                  currentSort={sortType as SortingType}
+                  onChangeSort={handleSortChange}
+                />
+
+                <div className="cities__places-list places__list tabs__content">
+                  <OffersList
                     offers={sortedOffers}
-                    center={cityLocation}
-                    activeOfferId={activeOfferId}
+                    onHover={handleOfferHover}
+                    isAuthorized={isAuthorized}
                   />
-                )}
+                </div>
               </section>
+
+              <div className="cities__right-section">
+                <section className="cities__map map">
+                  {cityLocation && (
+                    <Map
+                      offers={sortedOffers}
+                      center={cityLocation}
+                      activeOfferId={activeOfferId}
+                    />
+                  )}
+                </section>
+              </div>
             </div>
           </div>
-        </div>
-      </main>
+        </main>
+      ) : (
+        <MainEmpty city={city} />
+      )}
     </div>
   );
 };

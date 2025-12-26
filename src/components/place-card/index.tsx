@@ -1,15 +1,29 @@
 import React from 'react';
 import { Offer } from '../../types/offers';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useFavorite } from '../../hooks/use-favorite';
 
 type PlaceCardProps = {
   offer: Offer;
+  isAuthorized?: boolean;
   onHover?: (id: string | null) => void;
 };
 
-const PlaceCard: React.FC<PlaceCardProps> = ({ offer, onHover }) => {
+const PlaceCard: React.FC<PlaceCardProps> = ({
+  offer,
+  onHover,
+  isAuthorized,
+}) => {
   const { toggleFavorite } = useFavorite();
+  const navigate = useNavigate();
+
+  const handleFavoriteClick = () => {
+    if (!isAuthorized) {
+      navigate('/login');
+      return;
+    }
+    toggleFavorite(offer.id, offer.isFavorite);
+  };
 
   return (
     <article
@@ -43,8 +57,7 @@ const PlaceCard: React.FC<PlaceCardProps> = ({ offer, onHover }) => {
             className={`place-card__bookmark-button button ${
               offer.isFavorite ? 'place-card__bookmark-button--active' : ''
             }`}
-            onClick={() =>
-              offer && toggleFavorite(offer.id, offer.isFavorite)}
+            onClick={handleFavoriteClick}
             type="button"
           >
             <svg className="place-card__bookmark-icon" width="18" height="19">

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Navigate, useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import ReviewForm from '../../components/review-form';
 import ReviewsList from '../../components/review-list';
 import Map from '../../components/map';
@@ -32,6 +32,19 @@ const OfferPage: React.FC = () => {
     () => nearbyOffers.slice(0, 3),
     [nearbyOffers]
   );
+
+  const navigate = useNavigate();
+
+  const handleFavoriteClick = () => {
+    if (!isAuthorized) {
+      navigate('/login');
+      return;
+    }
+
+    if (currentOffer) {
+      toggleFavorite(currentOffer.id, currentOffer.isFavorite);
+    }
+  };
 
   if (isNotFound) {
     return <Navigate to="/404" replace />;
@@ -72,9 +85,7 @@ const OfferPage: React.FC = () => {
                       : ''
                   }`}
                   type="button"
-                  onClick={() =>
-                    currentOffer &&
-                    toggleFavorite(currentOffer.id, currentOffer.isFavorite)}
+                  onClick={handleFavoriteClick}
                 >
                   <svg className="offer__bookmark-icon" width="31" height="33">
                     <use xlinkHref="#icon-bookmark"></use>
