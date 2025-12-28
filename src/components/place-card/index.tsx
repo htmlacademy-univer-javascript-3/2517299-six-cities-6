@@ -28,6 +28,7 @@ const PlaceCard: React.FC<PlaceCardProps> = ({
   return (
     <article
       className="cities__card place-card"
+      data-testid="place-card"
       onMouseEnter={() => onHover && onHover(offer.id)}
       onMouseLeave={() => onHover && onHover(null)}
     >
