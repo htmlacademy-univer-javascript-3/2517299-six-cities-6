@@ -9,7 +9,7 @@ export type SortingType =
   | 'Price: high to low'
   | 'Top rated first';
 
-type OffersState = {
+export type OffersState = {
   city: string;
   offers: Offer[];
   sortType: SortingType;
