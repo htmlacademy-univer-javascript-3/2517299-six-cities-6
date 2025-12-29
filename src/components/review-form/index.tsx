@@ -70,7 +70,7 @@ const ReviewForm: React.FC = () => {
     formData.comment.length <= 300;
 
   return (
-    <form className="reviews__form form" onSubmit={handleSubmit}>
+    <form className="reviews__form form" onSubmit={handleSubmit} aria-label="review form">
       <label className="reviews__label form__label" htmlFor="review">
         Your review
       </label>
@@ -87,6 +87,7 @@ const ReviewForm: React.FC = () => {
               checked={formData.rating === star}
               onChange={handleRatingChange}
               disabled={isSubmitting}
+              aria-label={getRatingTitle(star)}
             />
             <label
               htmlFor={`${star}-stars`}

@@ -51,6 +51,7 @@ const LoginPage: React.FC = () => {
             <h1 className="login__title">Sign in</h1>
             <form
               className="login__form form"
+              role="form"
               onSubmit={(e) => {
                 e.preventDefault();
                 handleSubmit();
