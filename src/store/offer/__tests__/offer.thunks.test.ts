@@ -10,7 +10,7 @@ import {
 } from '../offer.thunks';
 import { NewCommentData, Review } from '../../../types/review';
 import { makeOfferDescription } from './test-utils';
-import { makeOffer } from '../../offers/__jest__/test-utils';
+import { makeOffer } from '../../offers/__tests__/test-utils';
 
 describe('Offer thunks with axios-mock-adapter', () => {
   let mockAPI: MockAdapter;

@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
+import { useSignOut } from '../../hooks/use-sign-out';
 
 type HeaderProps = {
   isAuthorized: boolean;
@@ -12,10 +13,7 @@ const HeaderComponent: React.FC<HeaderProps> = ({
   user,
   favoriteCount,
 }) => {
-  const handleSignOut = () => {
-    localStorage.removeItem('six-cities-token');
-    window.location.reload();
-  };
+  const signOut = useSignOut();
 
   return (
     <header className="header">
@@ -59,7 +57,7 @@ const HeaderComponent: React.FC<HeaderProps> = ({
                   <li className="header__nav-item">
                     <button
                       className="header__nav-link header__signout"
-                      onClick={handleSignOut}
+                      onClick={signOut}
                     >
                       Sign out
                     </button>

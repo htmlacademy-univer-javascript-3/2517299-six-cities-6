@@ -1,33 +1,11 @@
-import { useEffect, useRef } from 'react';
-import leaflet from 'leaflet';
+import { useRef } from 'react';
 import 'leaflet/dist/leaflet.css';
-import icon from 'leaflet/dist/images/marker-icon.png';
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
-
-import { Offer } from '../../types/offers';
 import useMap from '../../hooks/use-map';
-
+import { useMarkers } from '../../hooks/use-markers';
+import { Offer } from '../../types/offers';
 import styles from './styles.module.css';
 
-const defaultIcon = leaflet.icon({
-  iconUrl: 'img/pin.svg',
-  shadowUrl: iconShadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
-
-const activeIcon = leaflet.icon({
-  iconUrl: 'img/pin-active.svg',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
-
-leaflet.Marker.prototype.options.icon = leaflet.icon({
-  iconUrl: icon,
-  shadowUrl: iconShadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
+const DEFAULT_ZOOM = 13;
 
 type MapProps = {
   offers: Offer[];
@@ -38,8 +16,6 @@ type MapProps = {
   activeOfferId?: string | null;
 };
 
-const DEFAULT_ZOOM = 13;
-
 function Map({ offers, center, activeOfferId }: MapProps): JSX.Element {
   const mapRef = useRef<HTMLDivElement | null>(null);
 
@@ -49,29 +25,11 @@ function Map({ offers, center, activeOfferId }: MapProps): JSX.Element {
     zoom: DEFAULT_ZOOM,
   });
 
-  useEffect(() => {
-    if (!map) {
-      return;
-    }
-
-    const markersLayer = leaflet.layerGroup().addTo(map);
-
-    offers.forEach((offer) => {
-      leaflet
-        .marker([offer.location.latitude, offer.location.longitude], {
-          icon: offer.id === activeOfferId ? activeIcon : defaultIcon,
-        })
-        .addTo(markersLayer);
-    });
-
-    return () => {
-      map.removeLayer(markersLayer);
-    };
-  }, [map, offers, activeOfferId]);
+  useMarkers(map, offers, activeOfferId);
 
   return (
     <div className={styles.map}>
-      <div className={styles.map__container} ref={mapRef} />
+      <div className={styles.map__container} ref={mapRef} role="region" />
     </div>
   );
 }
