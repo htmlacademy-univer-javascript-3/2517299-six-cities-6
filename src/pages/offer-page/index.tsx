@@ -9,6 +9,7 @@ import { RootState } from '../../store';
 import { useFavorite } from '../../hooks/use-favorite';
 import { useFetchOfferData } from '../../hooks/use-fetch-offer-data';
 import Header from '../../components/header';
+import { Offer } from '../../types/offers';
 
 const OfferPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -32,6 +33,25 @@ const OfferPage: React.FC = () => {
     () => nearbyOffers.slice(0, 3),
     [nearbyOffers]
   );
+
+  const currentOfferForMap: Offer | null = currentOffer
+    ? {
+        id: currentOffer.id,
+        title: currentOffer.title,
+        type: currentOffer.type,
+        price: currentOffer.price,
+        rating: currentOffer.rating,
+        isPremium: currentOffer.isPremium,
+        isFavorite: currentOffer.isFavorite,
+        previewImage: currentOffer.images[0] || '',
+        city: currentOffer.city,
+        location: currentOffer.location,
+      }
+    : null;
+
+  const mapOffers = currentOfferForMap
+    ? [currentOfferForMap, ...nearbyOffersToShow]
+    : nearbyOffersToShow;
 
   const navigate = useNavigate();
 
@@ -163,8 +183,9 @@ const OfferPage: React.FC = () => {
           <section className="offer__map map">
             {currentOffer && (
               <Map
-                offers={nearbyOffersToShow}
+                offers={mapOffers}
                 center={currentOffer.city.location}
+                activeOfferId={currentOffer.id}
               />
             )}
           </section>

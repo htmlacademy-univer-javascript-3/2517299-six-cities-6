@@ -4,9 +4,13 @@ import PlaceCard from '../place-card';
 
 type FavoritesListProps = {
   offers: Offer[];
+  isAuthorized: boolean;
 };
 
-const FavoritesList: React.FC<FavoritesListProps> = ({ offers }) => {
+const FavoritesList: React.FC<FavoritesListProps> = ({
+  offers,
+  isAuthorized,
+}) => {
   const offersByCity = useMemo(() => {
     const grouped: Record<string, Offer[]> = {};
     offers.forEach((offer) => {
@@ -37,7 +41,11 @@ const FavoritesList: React.FC<FavoritesListProps> = ({ offers }) => {
           </div>
           <div className="favorites__places">
             {offersByCity[city].map((offer) => (
-              <PlaceCard key={offer.id} offer={offer} />
+              <PlaceCard
+                key={offer.id}
+                offer={offer}
+                isAuthorized={isAuthorized}
+              />
             ))}
           </div>
         </li>
