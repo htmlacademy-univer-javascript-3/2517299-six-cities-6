@@ -6,7 +6,7 @@ import { MemoryRouter } from 'react-router-dom';
 import MemoFavoritesList from '..';
 import { makeOffer } from '../../../utils/mocks';
 
-const renderWithProvider = (offers: Offer[]) => {
+const renderWithProvider = (offers: Offer[], isAuthorized = true) => {
   const store = createTestStore({
     offers: {
       city: 'Paris',
@@ -20,7 +20,7 @@ const renderWithProvider = (offers: Offer[]) => {
   return render(
     <Provider store={store}>
       <MemoryRouter>
-        <MemoFavoritesList offers={offers} />
+        <MemoFavoritesList offers={offers} isAuthorized={isAuthorized}/>
       </MemoryRouter>
     </Provider>
   );

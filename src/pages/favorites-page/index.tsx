@@ -35,7 +35,7 @@ const FavoritesPage: React.FC = () => {
             {favoriteOffers.length === 0 ? (
               <p>No saved offers yet</p>
             ) : (
-              <FavoritesList offers={favoriteOffers} />
+              <FavoritesList offers={favoriteOffers} isAuthorized={isAuthorized}/>
             )}
           </section>
         </div>
