@@ -35,18 +35,7 @@ const OfferPage: React.FC = () => {
   );
 
   const currentOfferForMap: Offer | null = currentOffer
-    ? {
-        id: currentOffer.id,
-        title: currentOffer.title,
-        type: currentOffer.type,
-        price: currentOffer.price,
-        rating: currentOffer.rating,
-        isPremium: currentOffer.isPremium,
-        isFavorite: currentOffer.isFavorite,
-        previewImage: currentOffer.images[0] || '',
-        city: currentOffer.city,
-        location: currentOffer.location,
-      }
+    ? {id: currentOffer.id, title: currentOffer.title, type: currentOffer.type, price: currentOffer.price, rating: currentOffer.rating, isPremium: currentOffer.isPremium, isFavorite: currentOffer.isFavorite, previewImage: currentOffer.images[0] || '', city: currentOffer.city, location: currentOffer.location}
     : null;
 
   const mapOffers = currentOfferForMap
