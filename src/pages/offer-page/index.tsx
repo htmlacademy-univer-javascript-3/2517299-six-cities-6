@@ -10,6 +10,8 @@ import { useFavorite } from '../../hooks/use-favorite';
 import { useFetchOfferData } from '../../hooks/use-fetch-offer-data';
 import Header from '../../components/header';
 import { Offer } from '../../types/offers';
+import { AuthorizationStatus } from '../../types/auth';
+import { NEARBY_OFFERS_LIMIT, OFFER_IMAGES_LIMIT } from '../../const';
 
 const OfferPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -25,12 +27,12 @@ const OfferPage: React.FC = () => {
 
   const { toggleFavorite } = useFavorite();
 
-  const isAuthorized = authorizationStatus === 'AUTH';
+  const isAuthorized = authorizationStatus === AuthorizationStatus.Auth;
 
   useFetchOfferData(id);
 
   const nearbyOffersToShow = useMemo(
-    () => nearbyOffers.slice(0, 3),
+    () => nearbyOffers.slice(0, NEARBY_OFFERS_LIMIT),
     [nearbyOffers]
   );
 
@@ -71,7 +73,7 @@ const OfferPage: React.FC = () => {
         <section className="offer">
           <div className="offer__gallery-container container">
             <div className="offer__gallery">
-              {currentOffer?.images.slice(0, 6).map((image) => (
+              {currentOffer?.images.slice(0, OFFER_IMAGES_LIMIT).map((image) => (
                 <div key={image} className="offer__image-wrapper">
                   <img className="offer__image" src={image} alt="Interior" />
                 </div>

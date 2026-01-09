@@ -5,6 +5,8 @@ import { createTestStore } from '../../../utils/create-test-store';
 import { makeOffer } from '../../../utils/mocks';
 import { RootState } from '../../../store';
 import FavoritesPage from '..';
+import { CityNames, SortingType } from '../../../types/offers';
+import { AuthorizationStatus } from '../../../types/auth';
 
 const renderWithStore = (preloadedState: Partial<RootState>) => {
   const store = createTestStore(preloadedState);
@@ -22,7 +24,7 @@ describe('FavoritesPage', () => {
   it('renders favorites when user is authorized', () => {
     renderWithStore({
       auth: {
-        authorizationStatus: 'AUTH',
+        authorizationStatus: AuthorizationStatus.Auth,
         user: {
           email: 'test@test.com',
           name: 'Test',
@@ -32,11 +34,11 @@ describe('FavoritesPage', () => {
         },
       },
       offers: {
-        city: 'Paris',
+        city: CityNames.Paris,
         offers: [],
-        sortType: 'Popular',
+        sortType: SortingType.Popular,
         activeOfferId: null,
-        favoriteOffers: [makeOffer('1', 'Paris'), makeOffer('2', 'Amsterdam')],
+        favoriteOffers: [makeOffer('1', CityNames.Paris), makeOffer('2', CityNames.Amsterdam)],
       },
     });
 
@@ -48,13 +50,13 @@ describe('FavoritesPage', () => {
   it('renders empty favorites list', () => {
     renderWithStore({
       auth: {
-        authorizationStatus: 'AUTH',
+        authorizationStatus: AuthorizationStatus.Auth,
         user: null,
       },
       offers: {
-        city: 'Paris',
+        city: CityNames.Paris,
         offers: [],
-        sortType: 'Popular',
+        sortType: SortingType.Popular,
         activeOfferId: null,
         favoriteOffers: [],
       },

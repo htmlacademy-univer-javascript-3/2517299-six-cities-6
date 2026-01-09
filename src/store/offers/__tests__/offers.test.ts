@@ -7,24 +7,25 @@ import offersReducer, {
 import { fetchOffers } from '../offers.thunks';
 import { toggleFavoriteStatus } from '../../offer/offer.thunks';
 import { makeOffer } from './test-utils';
+import { CityNames, SortingType } from '../../../types/offers';
 
 describe('offersSlice reducer', () => {
   const initialState: OffersState = {
-    city: 'Paris',
+    city: CityNames.Paris,
     offers: [],
-    sortType: 'Popular',
+    sortType: SortingType.Popular,
     activeOfferId: null,
     favoriteOffers: [],
   };
   test('setCity', () => {
-    const state = offersReducer(initialState, setCity('Amsterdam'));
+    const state = offersReducer(initialState, setCity(CityNames.Amsterdam));
     expect(state.city).toBe('Amsterdam');
   });
 
   test('setSortType', () => {
     const state = offersReducer(
       initialState,
-      setSortType('Price: high to low')
+      setSortType(SortingType.PriceHighToLow)
     );
     expect(state.sortType).toBe('Price: high to low');
   });

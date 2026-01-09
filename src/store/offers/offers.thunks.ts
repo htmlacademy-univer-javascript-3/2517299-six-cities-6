@@ -11,7 +11,7 @@ export const fetchOffers = createAsyncThunk<Offer[]>(
 );
 
 export const fetchFavoriteOffers = createAsyncThunk<Offer[]>(
-  'app/fetchFavoriteOffers',
+  'offers/fetchFavoriteOffers',
   async (_, { rejectWithValue }) => {
     try {
       const response = await api.get<Offer[]>('/favorite');

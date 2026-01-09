@@ -5,12 +5,14 @@ import OffersList from '../../components/offers-list';
 import Map from '../../components/map';
 import { AppDispatch, RootState } from '../../store';
 import CitiesList from '../../components/cities-list';
-import SortingOptions, { SortingType } from '../../components/sorting-options';
+import SortingOptions from '../../components/sorting-options';
 import { selectSortedOffers } from '../../store/offers/offers.selectors';
 import { setSortType } from '../../store/offers/offers.slice';
 import { useFetchFavoritesIfAuth } from '../../hooks/use-fetch-favorites';
 import Header from '../../components/header';
 import MainEmpty from '../main-empty-page';
+import { SortingType } from '../../types/offers';
+import { AuthorizationStatus } from '../../types/auth';
 
 const MainPage: React.FC = () => {
   const [activeOfferId, setActiveOfferId] = useState<string | null>(null);
@@ -25,7 +27,7 @@ const MainPage: React.FC = () => {
     (state: RootState) => state.auth
   );
 
-  const isAuthorized = authorizationStatus === 'AUTH';
+  const isAuthorized = authorizationStatus === AuthorizationStatus.Auth;
 
   useFetchFavoritesIfAuth();
 
@@ -42,7 +44,9 @@ const MainPage: React.FC = () => {
   }, []);
 
   const handleSortChange = useCallback(
-    (type: SortingType) => dispatch(setSortType(type)),
+    (type: SortingType) => {
+      dispatch(setSortType(type));
+    },
     [dispatch]
   );
 
@@ -75,7 +79,7 @@ const MainPage: React.FC = () => {
                 </b>
 
                 <SortingOptions
-                  currentSort={sortType as SortingType}
+                  currentSort={sortType}
                   onChangeSort={handleSortChange}
                 />
 

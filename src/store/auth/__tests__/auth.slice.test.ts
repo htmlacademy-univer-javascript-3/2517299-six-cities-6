@@ -4,7 +4,7 @@ import { AuthorizationStatus } from '../../../types/auth';
 
 describe('authSlice reducer', () => {
   const initialState = {
-    authorizationStatus: 'NO_AUTH' as AuthorizationStatus,
+    authorizationStatus: AuthorizationStatus.NoAuth,
     user: null,
   };
 
@@ -17,7 +17,7 @@ describe('authSlice reducer', () => {
       type: login.fulfilled.type,
     });
 
-    expect(state.authorizationStatus).toBe('AUTH');
+    expect(state.authorizationStatus).toBe(AuthorizationStatus.Auth);
   });
 
   test('login.rejected → NO_AUTH', () => {
@@ -25,7 +25,7 @@ describe('authSlice reducer', () => {
       type: login.rejected.type,
     });
 
-    expect(state.authorizationStatus).toBe('NO_AUTH');
+    expect(state.authorizationStatus).toBe(AuthorizationStatus.NoAuth);
   });
 
   test('checkAuth.fulfilled with user → AUTH', () => {
@@ -41,7 +41,7 @@ describe('authSlice reducer', () => {
       payload: user,
     });
 
-    expect(state.authorizationStatus).toBe('AUTH');
+    expect(state.authorizationStatus).toBe(AuthorizationStatus.Auth);
     expect(state.user).toEqual(user);
   });
 
@@ -51,7 +51,7 @@ describe('authSlice reducer', () => {
       payload: null,
     });
 
-    expect(state.authorizationStatus).toBe('NO_AUTH');
+    expect(state.authorizationStatus).toBe(AuthorizationStatus.NoAuth);
     expect(state.user).toBeNull();
   });
 });

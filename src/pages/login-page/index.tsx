@@ -1,16 +1,21 @@
 import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
-import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../store';
+import { Link, useNavigate } from 'react-router-dom';
 import { useLoginForm } from '../../hooks/use-login-form';
+import { AuthorizationStatus } from '../../types/auth';
+import { CityNames } from '../../types/offers';
+import { setCity } from '../../store/offers/offers.slice';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const authorizationStatus = useSelector(
     (state: RootState) => state.auth.authorizationStatus
   );
+  const dispatch = useDispatch<AppDispatch>();
 
   const [formData, setFormData] = useState({ email: '', password: '' });
+  const [randomCity, setRandomCity] = useState<CityNames | null>(null);
 
   const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -20,10 +25,23 @@ const LoginPage: React.FC = () => {
   const { handleSubmit, isSubmitting, errorMessage } = useLoginForm(formData);
 
   useEffect(() => {
-    if (authorizationStatus === 'AUTH') {
+    const cities = Object.values(CityNames);
+    const randomIndex = Math.floor(Math.random() * cities.length);
+    setRandomCity(cities[randomIndex]);
+  }, []);
+
+  useEffect(() => {
+    if (authorizationStatus === AuthorizationStatus.Auth) {
       navigate('/');
     }
   }, [authorizationStatus, navigate]);
+
+  const handleCityClick = useCallback(
+    (city: CityNames) => {
+      dispatch(setCity(city));
+    },
+    [dispatch]
+  );
 
   return (
     <div className="page page--gray page--login">
@@ -91,6 +109,19 @@ const LoginPage: React.FC = () => {
               </button>
             </form>
           </section>
+          {randomCity && (
+            <section className="locations locations--login locations--current">
+              <div className="locations__item">
+                <Link
+                  className="locations__item-link"
+                  to="/"
+                  onClick={() => handleCityClick(randomCity)}
+                >
+                  <span>{randomCity}</span>
+                </Link>
+              </div>
+            </section>
+          )}
         </div>
       </main>
     </div>

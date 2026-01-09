@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { Offer } from '../../../types/offers';
+import { CityNames, Offer, SortingType } from '../../../types/offers';
 import { createTestStore } from '../../../utils/create-test-store';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
@@ -9,9 +9,9 @@ import { makeOffer } from '../../../utils/mocks';
 const renderWithProvider = (offers: Offer[], isAuthorized = true) => {
   const store = createTestStore({
     offers: {
-      city: 'Paris',
+      city: CityNames.Paris,
       offers,
-      sortType: 'Popular',
+      sortType: SortingType.Popular,
       activeOfferId: null,
       favoriteOffers: [],
     },
@@ -29,9 +29,9 @@ const renderWithProvider = (offers: Offer[], isAuthorized = true) => {
 describe('FavoritesList', () => {
   it('renders cities and offers', () => {
     const offers = [
-      makeOffer('1', 'Paris'),
-      makeOffer('2', 'Paris'),
-      makeOffer('3', 'Amsterdam'),
+      makeOffer('1', CityNames.Paris),
+      makeOffer('2', CityNames.Paris),
+      makeOffer('3', CityNames.Amsterdam),
     ];
 
     renderWithProvider(offers);
@@ -46,9 +46,9 @@ describe('FavoritesList', () => {
 
   it('groups offers by city', () => {
     const offers = [
-      makeOffer('1', 'Paris'),
-      makeOffer('2', 'Amsterdam'),
-      makeOffer('3', 'Paris'),
+      makeOffer('1', CityNames.Paris),
+      makeOffer('2', CityNames.Amsterdam),
+      makeOffer('3', CityNames.Paris),
     ];
 
     renderWithProvider(offers);

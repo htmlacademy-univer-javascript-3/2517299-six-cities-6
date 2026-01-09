@@ -1,7 +1,6 @@
 import { renderHook } from '@testing-library/react';
-import { Offer } from '../../types/offers';
+import { Offer, SortingType } from '../../types/offers';
 import { useSortedOffers } from '../use-sorted-offers';
-import { SortingType } from '../../components/sorting-options';
 
 describe('useSortedOffers', () => {
   const offers: Offer[] = [
@@ -12,7 +11,7 @@ describe('useSortedOffers', () => {
 
   it('should sort offers by price ascending', () => {
     const sorted = renderHook(() =>
-      useSortedOffers(offers, 'Price: low to high' as SortingType)
+      useSortedOffers(offers, SortingType.PriceLowToHigh)
     ).result.current;
 
     expect(sorted.map((o) => o.id)).toEqual(['2', '1', '3']);
@@ -20,7 +19,7 @@ describe('useSortedOffers', () => {
 
   it('should sort offers by price descending', () => {
     const sorted = renderHook(() =>
-      useSortedOffers(offers, 'Price: high to low' as SortingType)
+      useSortedOffers(offers, SortingType.PriceHighToLow)
     ).result.current;
 
     expect(sorted.map((o) => o.id)).toEqual(['3', '1', '2']);
@@ -28,7 +27,7 @@ describe('useSortedOffers', () => {
 
   it('should sort offers by rating descending', () => {
     const sorted = renderHook(() =>
-      useSortedOffers(offers, 'Top rated first' as SortingType)
+      useSortedOffers(offers, SortingType.TopRatedFirst)
     ).result.current;
 
     expect(sorted.map((o) => o.id)).toEqual(['2', '1', '3']);

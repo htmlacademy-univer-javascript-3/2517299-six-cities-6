@@ -1,3 +1,4 @@
+import { MAX_RATING } from '../../const';
 import { Review } from '../../types/review';
 
 type ReviewProps = {
@@ -7,7 +8,7 @@ type ReviewProps = {
 function ReviewItem({ review }: ReviewProps): JSX.Element {
   const { comment, date, rating, user } = review;
 
-  const ratingWidth = `${Math.round((rating / 5) * 100)}%`;
+  const ratingWidth = `${Math.round((rating / MAX_RATING) * 100)}%`;
 
   return (
     <li className="reviews__item">

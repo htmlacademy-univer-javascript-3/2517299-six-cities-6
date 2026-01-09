@@ -8,7 +8,7 @@ type AuthState = {
 };
 
 const initialState: AuthState = {
-  authorizationStatus: 'NO_AUTH',
+  authorizationStatus: AuthorizationStatus.NoAuth,
   user: null,
 };
 
@@ -19,14 +19,14 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(login.fulfilled, (state) => {
-        state.authorizationStatus = 'AUTH';
+        state.authorizationStatus = AuthorizationStatus.Auth;
       })
       .addCase(login.rejected, (state) => {
-        state.authorizationStatus = 'NO_AUTH';
+        state.authorizationStatus = AuthorizationStatus.NoAuth;
       })
       .addCase(checkAuth.fulfilled, (state, action) => {
         state.user = action.payload;
-        state.authorizationStatus = action.payload ? 'AUTH' : 'NO_AUTH';
+        state.authorizationStatus = action.payload ? AuthorizationStatus.Auth : AuthorizationStatus.NoAuth;
       });
   },
 });

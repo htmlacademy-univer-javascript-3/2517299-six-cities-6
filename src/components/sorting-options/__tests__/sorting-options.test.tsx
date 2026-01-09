@@ -1,9 +1,10 @@
 import { render, screen, within } from '@testing-library/react';
 import SortingOptions from '..';
+import { SortingType } from '../../../types/offers';
 
 describe('SortingOptions', () => {
   it('renders sorting options with current sort', () => {
-    render(<SortingOptions currentSort="Popular" onChangeSort={() => {}} />);
+    render(<SortingOptions currentSort={SortingType.Popular} onChangeSort={() => {}} />);
 
     const currentSort = screen.getByText('Popular', { selector: 'span.places__sorting-type' });
     expect(currentSort).toBeInTheDocument();

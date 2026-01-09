@@ -5,7 +5,7 @@ import { makeOffer } from '../../../utils/mocks';
 import { createTestStore } from '../../../utils/create-test-store';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
-import { Offer } from '../../../types/offers';
+import { CityNames, Offer, SortingType } from '../../../types/offers';
 
 const renderWithProvider = (
   offers: Offer[],
@@ -14,9 +14,9 @@ const renderWithProvider = (
 ) => {
   const store = createTestStore({
     offers: {
-      city: 'Paris',
+      city: CityNames.Paris,
       offers,
-      sortType: 'Popular',
+      sortType: SortingType.Popular,
       activeOfferId: null,
       favoriteOffers: [],
     },

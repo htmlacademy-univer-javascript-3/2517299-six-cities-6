@@ -3,6 +3,8 @@ import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { createTestStore } from '../../../utils/create-test-store';
 import LoginPage from '..';
+import { AuthorizationStatus } from '../../../types/auth';
+import { CityNames } from '../../../types/offers';
 
 const handleSubmitMock = vi.fn();
 
@@ -14,7 +16,9 @@ vi.mock('../../../hooks/use-login-form', () => ({
   }),
 }));
 
-const renderPage = (authStatus: 'AUTH' | 'NO_AUTH' = 'NO_AUTH') => {
+const renderPage = (
+  authStatus: AuthorizationStatus = AuthorizationStatus.NoAuth
+) => {
   const store = createTestStore({
     auth: { authorizationStatus: authStatus, user: null },
   });
@@ -85,9 +89,23 @@ describe('LoginPage', () => {
   });
 
   it('redirects to main page if user is authorized', () => {
-    const store = renderPage('AUTH');
+    const store = renderPage(AuthorizationStatus.Auth);
 
     const state = store.getState();
-    expect(state.auth.authorizationStatus).toBe('AUTH');
+    expect(state.auth.authorizationStatus).toBe(AuthorizationStatus.Auth);
+  });
+
+  it('renders a random city link', () => {
+    renderPage();
+
+    const cityLinks = screen
+      .getAllByRole('link', { name: /./i })
+      .filter((link) => link.classList.contains('locations__item-link'));
+
+    expect(cityLinks.length).toBe(1);
+
+    const cityLink = cityLinks[0];
+    expect(cityLink).toBeInTheDocument();
+    expect(Object.values(CityNames)).toContain(cityLink.textContent);
   });
 });

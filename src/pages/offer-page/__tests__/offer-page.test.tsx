@@ -5,6 +5,8 @@ import { createTestStore } from '../../../utils/create-test-store';
 import OfferPage from '..';
 import { makeOffer, makeOfferDescription } from '../../../utils/mocks';
 import { RootState } from '../../../store';
+import { CityNames, SortingType } from '../../../types/offers';
+import { AuthorizationStatus } from '../../../types/auth';
 
 const renderWithStoreAndRoute = (
   preloadedState: Partial<RootState>,
@@ -26,13 +28,13 @@ const renderWithStoreAndRoute = (
 };
 
 describe('OfferPage', () => {
-  const currentOfferMock = makeOfferDescription('1', 'Paris');
+  const currentOfferMock = makeOfferDescription('1', CityNames.Paris);
   const nearbyOffersMock = [
-    makeOffer('2', 'Paris'),
-    makeOffer('3', 'Paris'),
-    makeOffer('4', 'Paris'),
+    makeOffer('2', CityNames.Paris),
+    makeOffer('3', CityNames.Paris),
+    makeOffer('4', CityNames.Paris),
   ];
-  const favoriteOffersMock = [makeOffer('5', 'Paris'), makeOffer('6', 'Paris')];
+  const favoriteOffersMock = [makeOffer('5', CityNames.Paris), makeOffer('6', CityNames.Paris)];
   const commentsMock = [
     {
       id: '1',
@@ -53,7 +55,7 @@ describe('OfferPage', () => {
   it('renders offer details correctly', () => {
     renderWithStoreAndRoute({
       auth: {
-        authorizationStatus: 'AUTH',
+        authorizationStatus: AuthorizationStatus.Auth,
         user: {
           name: 'Test',
           email: 'test@test.com',
@@ -69,9 +71,9 @@ describe('OfferPage', () => {
         isNotFound: false,
       },
       offers: {
-        city: 'Paris',
+        city: CityNames.Paris,
         offers: [],
-        sortType: 'Popular',
+        sortType: SortingType.Popular,
         activeOfferId: null,
         favoriteOffers: favoriteOffersMock,
       },
@@ -88,7 +90,7 @@ describe('OfferPage', () => {
   it('renders ReviewForm only if authorized', () => {
     renderWithStoreAndRoute({
       auth: {
-        authorizationStatus: 'AUTH',
+        authorizationStatus: AuthorizationStatus.Auth,
         user: {
           name: 'Test',
           email: 'test@test.com',
@@ -104,9 +106,9 @@ describe('OfferPage', () => {
         isNotFound: false,
       },
       offers: {
-        city: 'Paris',
+        city: CityNames.Paris,
         offers: [],
-        sortType: 'Popular',
+        sortType: SortingType.Popular,
         activeOfferId: null,
         favoriteOffers: favoriteOffersMock,
       },
@@ -120,7 +122,7 @@ describe('OfferPage', () => {
 
   it('redirects to 404 page if offer not found', () => {
     renderWithStoreAndRoute({
-      auth: { authorizationStatus: 'AUTH', user: null },
+      auth: { authorizationStatus: AuthorizationStatus.Auth, user: null },
       offer: {
         currentOffer: null,
         nearbyOffers: [],
@@ -128,9 +130,9 @@ describe('OfferPage', () => {
         isNotFound: true,
       },
       offers: {
-        city: 'Paris',
+        city: CityNames.Paris,
         offers: [],
-        sortType: 'Popular',
+        sortType: SortingType.Popular,
         activeOfferId: null,
         favoriteOffers: [],
       },
@@ -141,7 +143,7 @@ describe('OfferPage', () => {
 
   it('bookmark button navigates to login if not authorized', () => {
     renderWithStoreAndRoute({
-      auth: { authorizationStatus: 'NO_AUTH', user: null },
+      auth: { authorizationStatus: AuthorizationStatus.NoAuth, user: null },
       offer: {
         currentOffer: currentOfferMock,
         nearbyOffers: nearbyOffersMock,
@@ -149,9 +151,9 @@ describe('OfferPage', () => {
         isNotFound: false,
       },
       offers: {
-        city: 'Paris',
+        city: CityNames.Paris,
         offers: [],
-        sortType: 'Popular',
+        sortType: SortingType.Popular,
         activeOfferId: null,
         favoriteOffers: [],
       },

@@ -1,12 +1,12 @@
 import { OffersState } from '../store/offers/offers.slice';
-import { Offer, OfferDescription } from '../types/offers';
+import { CityNames, Offer, OfferDescription, SortingType } from '../types/offers';
 
 export const createOffersState = (
   overrides?: Partial<OffersState>
 ): OffersState => ({
-  city: 'Paris',
+  city: CityNames.Paris,
   offers: [],
-  sortType: 'Popular',
+  sortType: SortingType.Popular,
   activeOfferId: null,
   favoriteOffers: [],
   ...overrides,

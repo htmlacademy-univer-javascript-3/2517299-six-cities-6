@@ -4,6 +4,7 @@ import { createTestStore } from '../../../utils/create-test-store';
 import { Provider } from 'react-redux';
 import CitiesList from '..';
 import { createOffersState } from '../../../utils/mocks';
+import { CityNames } from '../../../types/offers';
 
 const renderWithStore = (preloadedState?: Partial<RootState>) => {
   const store = createTestStore(preloadedState);
@@ -28,7 +29,7 @@ describe('CitiesList', () => {
 
   it('sets active class for selected city', () => {
     const { getByText } = renderWithStore({
-      offers: createOffersState({ city: 'Brussels' }),
+      offers: createOffersState({ city: CityNames.Brussels }),
     });
 
     const activeLink = getByText('Brussels').closest('a');
@@ -40,6 +41,6 @@ describe('CitiesList', () => {
     const cityLink = getByText('Amsterdam').closest('a')!;
     fireEvent.click(cityLink);
 
-    expect(store.getState().offers.city).toBe('Amsterdam');
+    expect(store.getState().offers.city).toBe(CityNames.Amsterdam);
   });
 });

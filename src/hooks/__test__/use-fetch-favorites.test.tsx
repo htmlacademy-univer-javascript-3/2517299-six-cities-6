@@ -2,11 +2,12 @@ import { Provider } from 'react-redux';
 import { createTestStore } from '../../utils/create-test-store';
 import { useFetchFavoritesIfAuth } from '../use-fetch-favorites';
 import { renderHook } from '@testing-library/react';
+import { AuthorizationStatus } from '../../types/auth';
 describe('useFetchFavoritesIfAuth', () => {
   it('should dispatch fetchFavoriteOffers if authorized', () => {
     const store = createTestStore({
       auth: {
-        authorizationStatus: 'AUTH',
+        authorizationStatus: AuthorizationStatus.Auth,
         user: {
           name: 'test-user',
           avatarUrl: '',
@@ -29,7 +30,7 @@ describe('useFetchFavoritesIfAuth', () => {
   it('should not dispatch fetchFavoriteOffers if not authorized', () => {
     const store = createTestStore({
       auth: {
-        authorizationStatus: 'NO_AUTH',
+        authorizationStatus: AuthorizationStatus.NoAuth,
         user: {
           name: 'test-user',
           avatarUrl: '',

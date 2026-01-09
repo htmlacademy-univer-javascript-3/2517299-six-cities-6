@@ -1,4 +1,7 @@
-export type AuthorizationStatus = 'AUTH' | 'NO_AUTH';
+export enum AuthorizationStatus {
+  Auth = 'AUTH',
+  NoAuth = 'NO_AUTH',
+}
 
 export type LoginData = {
   email: string;

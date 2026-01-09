@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { NewCommentData } from '../../types/review';
 import { postOfferComment } from '../../store/offer/offer.thunks';
+import { REVIEW_MAX_LENGTH, REVIEW_MIN_LENGTH, REVIEW_RATINGS } from '../../const';
 
 const getRatingTitle = (star: number): string => {
   switch (star) {
@@ -66,8 +67,8 @@ const ReviewForm: React.FC = () => {
 
   const isReviewValid =
     formData.rating > 0 &&
-    formData.comment.length >= 50 &&
-    formData.comment.length <= 300;
+    formData.comment.length >= REVIEW_MIN_LENGTH &&
+    formData.comment.length <= REVIEW_MAX_LENGTH;
 
   return (
     <form className="reviews__form form" onSubmit={handleSubmit} aria-label="review form">
@@ -76,7 +77,7 @@ const ReviewForm: React.FC = () => {
       </label>
 
       <div className="reviews__rating-form form__rating">
-        {[5, 4, 3, 2, 1].map((star) => (
+        {REVIEW_RATINGS.map((star) => (
           <React.Fragment key={star}>
             <input
               className="form__rating-input visually-hidden"

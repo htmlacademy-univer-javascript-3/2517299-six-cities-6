@@ -3,15 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '../../store';
 import { selectCity } from '../../store/offers/offers.selectors';
 import { setCity } from '../../store/offers/offers.slice';
+import { CityNames } from '../../types/offers';
 
-const cities = [
-  'Paris',
-  'Cologne',
-  'Brussels',
-  'Amsterdam',
-  'Hamburg',
-  'Dusseldorf',
-];
+const cities = Object.values(CityNames);
 
 const CitiesList: React.FC = () => {
   const selectedCity = useSelector(selectCity);
@@ -19,7 +13,7 @@ const CitiesList: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const handleCityClick = useCallback(
-    (city: string) => {
+    (city: CityNames) => {
       dispatch(setCity(city));
     },
     [dispatch]

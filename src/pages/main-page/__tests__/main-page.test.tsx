@@ -5,6 +5,8 @@ import MainPage from '..';
 import { createTestStore } from '../../../utils/create-test-store';
 import { makeOffer } from '../../../utils/mocks';
 import { RootState } from '../../../store';
+import { CityNames, SortingType } from '../../../types/offers';
+import { AuthorizationStatus } from '../../../types/auth';
 
 const renderWithStore = (preloadedState: Partial<RootState>) => {
   const store = createTestStore(preloadedState);
@@ -21,16 +23,16 @@ const renderWithStore = (preloadedState: Partial<RootState>) => {
 describe('Component: MainPage', () => {
   it('renders MainPage with offers', () => {
     const offers = [
-      makeOffer('1', 'Paris'),
-      makeOffer('2', 'Paris')
+      makeOffer('1', CityNames.Paris),
+      makeOffer('2', CityNames.Paris)
     ];
 
     renderWithStore({
-      auth: { authorizationStatus: 'AUTH', user: null },
+      auth: { authorizationStatus: AuthorizationStatus.Auth, user: null },
       offers: {
-        city: 'Paris',
+        city: CityNames.Paris,
         offers,
-        sortType: 'Popular',
+        sortType: SortingType.Popular,
         activeOfferId: null,
         favoriteOffers: [],
       },
@@ -47,11 +49,11 @@ describe('Component: MainPage', () => {
 
   it('renders MainEmpty when no offers for the city', () => {
     renderWithStore({
-      auth: { authorizationStatus: 'NO_AUTH', user: null },
+      auth: { authorizationStatus: AuthorizationStatus.NoAuth, user: null },
       offers: {
-        city: 'Paris',
+        city: CityNames.Paris,
         offers: [],
-        sortType: 'Popular',
+        sortType: SortingType.Popular,
         activeOfferId: null,
         favoriteOffers: [],
       },
@@ -63,15 +65,15 @@ describe('Component: MainPage', () => {
 
   it('displays the correct number of offers for another city', () => {
     const offers = [
-      makeOffer('1', 'Amsterdam')
+      makeOffer('1', CityNames.Amsterdam)
     ];
 
     renderWithStore({
-      auth: { authorizationStatus: 'AUTH', user: null },
+      auth: { authorizationStatus: AuthorizationStatus.Auth, user: null },
       offers: {
-        city: 'Amsterdam',
+        city: CityNames.Amsterdam,
         offers,
-        sortType: 'Popular',
+        sortType: SortingType.Popular,
         activeOfferId: null,
         favoriteOffers: [],
       },

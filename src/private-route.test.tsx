@@ -12,7 +12,7 @@ describe('PrivateRoute', () => {
       auth: {
         authorizationStatus: authStatus,
         user:
-          authStatus === 'AUTH'
+          authStatus === AuthorizationStatus.Auth
             ? {name: 'Test User',avatarUrl: '', email: 'test@mail.ru',isPro: false,token: 'six-cities',}
             : null,
       },
@@ -38,14 +38,14 @@ describe('PrivateRoute', () => {
   };
 
   it('renders children when user is authorized', () => {
-    renderWithStore('AUTH');
+    renderWithStore(AuthorizationStatus.Auth);
 
     expect(screen.getByText('Protected Content')).toBeInTheDocument();
     expect(screen.queryByText('Login Page')).not.toBeInTheDocument();
   });
 
   it('redirects to login when user is not authorized', () => {
-    renderWithStore('NO_AUTH');
+    renderWithStore(AuthorizationStatus.NoAuth);
 
     expect(screen.getByText('Login Page')).toBeInTheDocument();
     expect(screen.queryByText('Protected Content')).not.toBeInTheDocument();

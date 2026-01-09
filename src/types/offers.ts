@@ -4,7 +4,7 @@ export type Location = {
 };
 
 type City = {
-  name: string;
+  name: CityNames;
   location: Location;
 };
 
@@ -27,7 +27,7 @@ export type OfferDescription = {
   type: string;
   price: number;
   city: {
-    name: string;
+    name: CityNames;
     location: {
       latitude: number;
       longitude: number;
@@ -53,3 +53,19 @@ export type OfferDescription = {
   images: string[];
   maxAdults: number;
 };
+
+export enum SortingType {
+  Popular = 'Popular',
+  PriceLowToHigh = 'Price: low to high',
+  PriceHighToLow = 'Price: high to low',
+  TopRatedFirst = 'Top rated first',
+}
+
+export enum CityNames {
+  Paris = 'Paris',
+  Cologne = 'Cologne',
+  Brussels = 'Brussels',
+  Amsterdam = 'Amsterdam',
+  Hamburg = 'Hamburg',
+  Dusseldorf = 'Dusseldorf',
+}

@@ -1,16 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Offer } from '../../types/offers';
+import { CityNames, Offer, SortingType } from '../../types/offers';
 import { fetchFavoriteOffers, fetchOffers } from './offers.thunks';
 import { toggleFavoriteStatus } from '../offer/offer.thunks';
 
-export type SortingType =
-  | 'Popular'
-  | 'Price: low to high'
-  | 'Price: high to low'
-  | 'Top rated first';
-
 export type OffersState = {
-  city: string;
+  city: CityNames;
   offers: Offer[];
   sortType: SortingType;
   activeOfferId: string | null;
@@ -18,9 +12,9 @@ export type OffersState = {
 };
 
 const initialState: OffersState = {
-  city: 'Paris',
+  city: CityNames.Paris,
   offers: [],
-  sortType: 'Popular',
+  sortType: SortingType.Popular,
   activeOfferId: null,
   favoriteOffers: [],
 };
@@ -29,7 +23,7 @@ const offersSlice = createSlice({
   name: 'offers',
   initialState,
   reducers: {
-    setCity: (state, action: PayloadAction<string>) => {
+    setCity: (state, action: PayloadAction<CityNames>) => {
       state.city = action.payload;
     },
     setSortType: (state, action: PayloadAction<SortingType>) => {

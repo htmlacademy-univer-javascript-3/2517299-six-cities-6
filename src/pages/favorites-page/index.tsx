@@ -4,6 +4,7 @@ import { AppDispatch, RootState } from '../../store';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchFavoriteOffers } from '../../store/offers/offers.thunks';
 import Header from '../../components/header';
+import { AuthorizationStatus } from '../../types/auth';
 
 const FavoritesPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -12,7 +13,7 @@ const FavoritesPage: React.FC = () => {
   const { authorizationStatus, user } = useSelector(
     (state: RootState) => state.auth
   );
-  const isAuthorized = authorizationStatus === 'AUTH';
+  const isAuthorized = authorizationStatus === AuthorizationStatus.Auth;
 
   useEffect(() => {
     if (isAuthorized) {

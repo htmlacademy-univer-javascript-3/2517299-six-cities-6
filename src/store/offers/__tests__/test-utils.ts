@@ -1,4 +1,4 @@
-import { Offer } from '../../../types/offers';
+import { CityNames, Offer } from '../../../types/offers';
 
 export const makeOffer = (
   overrides: Partial<Offer> = {}
@@ -8,7 +8,7 @@ export const makeOffer = (
   type: 'apartment',
   price: 100,
   city: {
-    name: 'Paris',
+    name: CityNames.Paris,
     location: {
       latitude: 48.8566,
       longitude: 2.3522,

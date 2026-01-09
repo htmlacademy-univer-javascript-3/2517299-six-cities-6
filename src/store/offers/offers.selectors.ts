@@ -1,13 +1,10 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from '../index';
-import { Offer } from '../../types/offers';
-import { SortingType } from './offers.slice';
+import { CityNames, Offer, SortingType } from '../../types/offers';
 
-export const selectOffers = (state: RootState): Offer[] =>
-  state.offers.offers;
+export const selectOffers = (state: RootState): Offer[] => state.offers.offers;
 
-export const selectCity = (state: RootState): string =>
-  state.offers.city;
+export const selectCity = (state: RootState): CityNames => state.offers.city;
 
 export const selectSortType = (state: RootState): SortingType =>
   state.offers.sortType;
@@ -18,11 +15,11 @@ export const selectSortedOffers = createSelector(
     const filtered = offers.filter((o) => o.city.name === city);
 
     switch (sortType) {
-      case 'Price: low to high':
+      case SortingType.PriceLowToHigh:
         return [...filtered].sort((a, b) => a.price - b.price);
-      case 'Price: high to low':
+      case SortingType.PriceHighToLow:
         return [...filtered].sort((a, b) => b.price - a.price);
-      case 'Top rated first':
+      case SortingType.TopRatedFirst:
         return [...filtered].sort((a, b) => b.rating - a.rating);
       default:
         return filtered;
